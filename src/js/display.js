@@ -5,7 +5,7 @@ const legend_settings = {
 };
 let filters = [],
     selectors = [],
-    inputs = ['X-axis Title', 'Y-axis Title', 'Plot Title'],
+    inputs = ['X-axis Title', 'Y-axis Title', 'Y-Min', 'Y-Max', 'Plot Title'],
     data = [],
     filtersContainer = d3.selectAll('#filterControls'),
     selectorsContainer = d3.select('#selectorControls'),
@@ -39,11 +39,11 @@ function init(plot_data) {
     if (legend_item_max_length > 25) {
         right_margin = 400;
     } else if (legend_item_max_length > 20) {
-        right_margin = 320;
+        right_margin = 350;
     } else if (legend_item_max_length > 15) {
-        right_margin = 250;
+        right_margin = 270;
     } else {
-        right_margin = 160; 
+        right_margin = 220; 
     }
 
     switch (legend_position) {
@@ -67,7 +67,7 @@ function init(plot_data) {
             } else {
                 top_margin = 35; 
             }
-            margin = {'t':top_margin, 'l':120, 'r':20, 'b':150};
+            margin = {'t':top_margin, 'l':120, 'r':25, 'b':150};
             legend_width = 0.95 * total_width;
             break;
             
@@ -106,13 +106,13 @@ Promise.all([ d3.json("./data/config.json", {credentials: 'same-origin'}),
         data = files[1];
         filters.forEach(f => {
             let values = Array.from(new Set(files[1].map( d => d[f.name])));
-            addFilter(f, values);
+            addFilter(filtersContainer, f, values);
         })
-        addFilter(legend_settings, legend_settings.values);
+        addFilter(selectorsContainer, legend_settings, legend_settings.values);
 
         selectors.forEach(s => {
             if (s.multi_select=='yes') {
-                selectorsContainer.append("button")
+                filtersContainer.append("button")
                     .attr('class', 'btn btn-secondary dropdown-toggle')
                     .attr('type', 'button')
                     .attr('id', `dropdownMenu_${s.id}`)
@@ -120,7 +120,7 @@ Promise.all([ d3.json("./data/config.json", {credentials: 'same-origin'}),
                     .attr('aria-expanded', "false")
                     .text(s.name)
 
-                let dropdownLst = selectorsContainer.append('ul')
+                let dropdownLst = filtersContainer.append('ul')
                                     .attr('id', `dropdown-menu_${s.id}`)
                                     .attr('class', `dropdown-menu`)
                                     .attr('aria-labelledby', `dropdownMenu_${s.id}`);
@@ -148,12 +148,12 @@ Promise.all([ d3.json("./data/config.json", {credentials: 'same-origin'}),
                             .text(d);
                     });
             } else {
-                selectorsContainer.append('label')
+                filtersContainer.append('label')
                     .attr('id', `lbl_${s.id}`)
                     .attr('class', `selectorLbl`)
                     .text(s.name);
 
-                selectorsContainer.append('select')
+                filtersContainer.append('select')
                     .attr("name", `${s.id}`) 
                     .attr("id", `lst_${s.id}`)
                     .attr('class', `form-select selectorList`)
@@ -193,11 +193,11 @@ function selctorSelectionChanged() {
     selector_values[this.name] = this.value;
 }
 
-function addFilter(f, values) {
+function addFilter(container, f, values) {
     let f_name = f.name.replace(/\W/g,'_');
 
     if (f.multi_select=='yes') {
-        filtersContainer.append("button")
+        container.append("button")
             .attr('class', 'btn btn-secondary dropdown-toggle')
             .attr('type', 'button')
             .attr('id', `dropdownMenu_${f_name}`)
@@ -205,7 +205,7 @@ function addFilter(f, values) {
             .attr('aria-expanded', "false")
             .text(f.name)
             
-        let dropdownLst = filtersContainer.append('ul')
+        let dropdownLst = container.append('ul')
                             .attr('class', 'dropdown-menu')
                             .attr('id', `dropdown-menu_${f_name}`)
                             .attr('aria-labelledby', `dropdownMenu_${f_name}`);
@@ -233,12 +233,12 @@ function addFilter(f, values) {
                     .text(d);
             });
     } else {
-        filtersContainer.append('label')
+        container.append('label')
             .attr('id', `lbl_${f_name}`)
             .attr('class', `filterLbl`)
             .text(f_name);
 
-        filtersContainer.append('select')
+        container.append('select')
             .attr("name", `${f_name}`) 
             .attr("id", `lst_${f_name}`)
             .attr('class', `form-select selectorList`)
@@ -300,7 +300,11 @@ function display() {
         return true
     });
     
-    let plot_data = [];
+    let plot_data = [],
+        y_min = d3.select('#Y_Min').node().value,
+        y_max = d3.select('#Y_Max').node().value;
+    console.log(y_min, y_max);
+
     filtered_data.forEach(fd => {
         let colorByVal = '';
         colorByAttrs.forEach(c => {
@@ -311,10 +315,13 @@ function display() {
                         'c':colorByVal
                     })
     })
+    y_min = y_min==="" ? 0 : +y_min;
+    y_max = y_max==="" ? d3.max(plot_data, d => d.y) : +y_max;
+    console.log(y_min, y_max);
 
     init(plot_data);
     x_scale.domain([0, d3.max(plot_data, d => d.x)]);
-    y_scale.domain([0, d3.max(plot_data, d => d.y)]);
+    y_scale.domain([y_min, y_max]);
     line.x((d) => x_scale(d.x))
         .y((d) => y_scale(d.y));
 
