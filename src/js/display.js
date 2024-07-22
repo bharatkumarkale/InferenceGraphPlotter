@@ -1,11 +1,11 @@
 const legend_settings = {
     'name' : 'Legend Position',
     'multi_select': 'no',
-    'values': ['Right', 'Bottom', 'Top Left', 'Top Right', 'Bottom Left', 'Bottom Right']
+    'values': ['Bottom', 'Right', 'Top Left', 'Top Right', 'Bottom Left', 'Bottom Right']
 };
 let filters = [],
     selectors = [],
-    inputs = ['X-axis Title', 'Y-axis Title', 'Y-Min', 'Y-Max', 'Plot Title'],
+    inputs = ['X-axis Title', 'X-Max', 'Y-axis Title', 'Y-Min', 'Y-Max', 'Plot Title'],
     data = [],
     filtersContainer = d3.selectAll('#filterControls'),
     selectorsContainer = d3.select('#selectorControls'),
@@ -27,14 +27,21 @@ let filters = [],
     num_attrs_in_legend = 0,
     legend_width,
     legend_height,
-    legend_position = 'Right',
-    legendG = targetSVG.append('g');
+    legend_position = 'Bottom',
+    legendG = targetSVG.append('g'),
+    legend_icon_radius = 7,
+    legend_icon_padding = 2,
+    legend_items,
+    n_rows,
+    n_cols;
 
 function init(plot_data) { 
     let top_margin = 0,
-        right_margin = 0,
-        legend_item_max_length = d3.max(d3.map(plot_data, d=>d['c'].length));
-    console.log(legend_item_max_length);
+        right_margin = 0;
+        
+    legend_items = [... new Set(d3.map(plot_data, d=>d['c']))];
+
+    let legend_item_max_length = d3.max(legend_items.map(d => d.length));
 
     if (legend_item_max_length > 25) {
         right_margin = 400;
@@ -57,6 +64,7 @@ function init(plot_data) {
             }
             margin = {'t':top_margin, 'l':120, 'r':right_margin, 'b':60};
             legend_width = right_margin;
+            legend_height = 25*(legend_items.length+1);
             break;
 
         case 'Bottom':
@@ -67,8 +75,11 @@ function init(plot_data) {
             } else {
                 top_margin = 35; 
             }
-            margin = {'t':top_margin, 'l':120, 'r':25, 'b':150};
-            legend_width = 0.95 * total_width;
+            legend_width = total_width;
+            n_cols = Math.floor(legend_width/(legend_item_max_length*10+legend_icon_padding+legend_icon_radius*2));
+            n_rows = Math.ceil(legend_items.length/n_cols);
+            margin = {'t':top_margin, 'l':120, 'r':25, 'b':65 + n_rows*33};
+            legend_height =  n_rows*30;
             break;
             
         case 'Top Left':
@@ -95,7 +106,6 @@ function init(plot_data) {
     targetG.attr('transform', `translate(${margin.l}, ${margin.t})`);
     x_scale.range([0, width]);
     y_scale.range([height, 0]);
-    legend_height = 0.4 * height;
 }
 
 Promise.all([ d3.json("./data/config.json", {credentials: 'same-origin'}),
@@ -302,8 +312,8 @@ function display() {
     
     let plot_data = [],
         y_min = d3.select('#Y_Min').node().value,
-        y_max = d3.select('#Y_Max').node().value;
-    console.log(y_min, y_max);
+        y_max = d3.select('#Y_Max').node().value,
+        x_max = d3.select('#X_Max').node().value;
 
     filtered_data.forEach(fd => {
         let colorByVal = '';
@@ -315,12 +325,12 @@ function display() {
                         'c':colorByVal
                     })
     })
+    x_max = x_max==="" ? d3.max(plot_data, d => d.x) : +x_max
     y_min = y_min==="" ? 0 : +y_min;
     y_max = y_max==="" ? d3.max(plot_data, d => d.y) : +y_max;
-    console.log(y_min, y_max);
 
     init(plot_data);
-    x_scale.domain([0, d3.max(plot_data, d => d.x)]);
+    x_scale.domain([0, x_max]);
     y_scale.domain([y_min, y_max]);
     line.x((d) => x_scale(d.x))
         .y((d) => y_scale(d.y));
@@ -390,7 +400,9 @@ function display() {
 }
 
 function updateLegend() {
-    let legend_items = color_scale.domain().sort((a,b) => d3.ascending(+a, +b));
+    console.log(legend_items)
+    legend_items = color_scale.domain().sort((a,b) => d3.ascending(+a, +b));
+    console.log(legend_items)
     switch (legend_position) {
         case 'Right':
             updateLegend_right(legend_items);
@@ -417,12 +429,10 @@ function updateLegend() {
 }
 
 function updateLegend_right(legend_items) {
-    legend_height = d3.max([legend_height, 10*legend_items.length]);
+    // legend_height = d3.max([legend_height, 10*legend_items.length]);
     legendG.attr('transform', `translate(${total_width - 0.97*margin.r}, ${margin.t + height/2 - legend_height/2})`)
 
     let legend_top = num_attrs_in_legend>1 ? 20 : 40,
-        legend_icon_radius = 7,
-        legend_icon_padding = 5.
         legend_y_scale = d3.scaleBand().domain(legend_items).range([legend_height,legend_top]);
 
     legendG.selectAll('*').remove();
@@ -464,6 +474,31 @@ function updateLegend_right(legend_items) {
 
 function updateLegend_bottom(legend_items) {
     legendG.selectAll('*').remove();
+    legendG.attr('transform', `translate(${0.01*total_width}, ${total_height-legend_height+5})`)
+
+    let legend_y_scale = d3.scaleBand().domain([...Array(n_rows).keys()]).range([legend_height,0]),
+        legend_x_scale = d3.scaleBand().domain([...Array(n_cols).keys()]).range([0, legend_width]);
+
+    legendG.selectAll(".legendIcon")
+        .data(legend_items)
+        .join('circle')
+            .attr('cx', (d,i) => {
+                console.log(d, i, i%n_cols, i%n_rows);
+                return legend_x_scale(Math.floor(i/n_rows));
+            })
+            .attr('cy', (d,i) => legend_y_scale(i%n_rows))
+            .attr('r', legend_icon_radius)
+            .attr('fill', d => color_scale(d))
+            .attr("class", 'legendIcon')
+
+    legendG.selectAll(".legendIconText")
+        .data(legend_items)
+        .join('text')
+            .attr('x', (d,i) => legend_x_scale(Math.floor(i/n_rows))+2*legend_icon_radius)
+            .attr('y', (d,i) => legend_y_scale(i%n_rows))
+            .attr("class", 'legendIconText')
+            .style('alignment-baseline', 'middle')
+            .text(d => d)  
 }
 
 function updateLegend_topleft(legend_items) {

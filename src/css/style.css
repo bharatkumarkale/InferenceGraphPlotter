@@ -73,8 +73,8 @@ html, body, div {
 }
 
 .selectorList, .selectorInput {
-  margin-left: 0.25%;
-  margin-right: 0.75%;
+  margin-left: 0.05%;
+  margin-right: 0.1%;
 }
 
 .selectorList {
@@ -82,11 +82,11 @@ html, body, div {
 }
 
 .selectorInput {
-  width: 90px;
+  width: 70px;
 }
 
 #Plot_Title {
-  width: 300px;
+  width: 280px;
 }
 
 #btnSubmit {
@@ -96,15 +96,20 @@ html, body, div {
 
 .x-axis text, .y-axis text {
   font-family: 'Century Schoolbook', sans-serif;
-  font-size: 22px;
+  font-size: 21px;
 }
 
 .axis-grid line {
   stroke: rgb(206, 207, 208);
 }
 
-.axisText, .legendTitle, .legendIconText {
-  font-size: 22px;
+.axisText, .legendTitle {
+  font-size: 21px;
+  font-weight: lighter;
+}
+
+.legendIconText {
+  font-size: 21px;
   font-weight: lighter;
 }
 
