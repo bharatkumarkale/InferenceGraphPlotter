@@ -73,8 +73,8 @@ html, body, div {
 }
 
 .selectorList, .selectorInput {
-  margin-left: 0.05%;
-  margin-right: 0.1%;
+  /* margin-left: 0.05%; */
+  margin-right: 0.05%;
 }
 
 .selectorList {
@@ -85,8 +85,16 @@ html, body, div {
   width: 70px;
 }
 
+#lst_Legend_Position {
+  width: 100px;
+}
+
+#Legend_Title {
+  width: 120px;
+}
+
 #Plot_Title {
-  width: 280px;
+  width: 200px;
 }
 
 #btnSubmit {
