@@ -485,7 +485,7 @@ function updateLegend_bottom(legend_items) {
     legendG.selectAll(".legendTitle")
         .data([legend_title])
         .join('text')
-            .attr('transform', `translate(${legend_width/2}, 10)`)
+            .attr('transform', () => legend_start_x==100 ? `translate(${(legend_width-100)/2}, 10)` : `translate(${legend_width/2}, 10)`)
             .attr("class", 'legendTitle')
             .text(d => d)
 
