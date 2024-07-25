@@ -10,15 +10,21 @@ html, body, div {
 #title{
   font-size: large;
   color: white;
+  width: 30%;
+}
+
+.configSelector {
+  width: 150px;
 }
 
 #titlePane {
   display: flex;
-  flex-flow: row wrap;
-  justify-content: center;
+  flex-direction: col;
+  justify-content: space-around;
   align-items: center;
   align-content: center;
-  height: 4%;
+  padding-top: 5px;
+  height: 4.5%;
   width: 100%;
   background-color: #292b2c;
 }

@@ -35,6 +35,16 @@ let filters = [],
     n_rows,
     n_cols;
 
+readFiles('Throughput')
+d3.selectAll('.configButton').on("click", configurationChanged)
+
+function configurationChanged() {
+    let curSel = d3.select(this);
+    d3.selectAll('.configButton').classed('active', false);
+    curSel.classed('active', true);
+    readFiles(curSel.attr('datadir'));
+}
+
 function init(plot_data) { 
     let top_margin = 0,
         right_margin = 0;
@@ -114,96 +124,104 @@ function init(plot_data) {
     legend_title = d3.select('#Legend_Title').node().value;
 }
 
-Promise.all([ d3.json("./data/config.json", {credentials: 'same-origin'}),
-              d3.csv("./data/All_results.csv", {credentials: 'same-origin'})])
+function readFiles(config) {
+    filtersContainer.selectAll("*").remove();
+    selectorsContainer.selectAll("*").remove();
+    targetG.selectAll('*').remove();
+    legendG.selectAll('*').remove();
+
+    Promise.all([ d3.json(`./data/${config}/config.json`, {credentials: 'same-origin'}),
+        d3.csv(`./data/${config}/All_results.csv`, {credentials: 'same-origin'})])
     .then(files => {
-        filters = files[0].Filters;
-        selectors = files[0].Selectors;
-        data = files[1];
-        filters.forEach(f => {
-            let values = Array.from(new Set(files[1].map( d => d[f.name])));
-            addFilter(filtersContainer, f, values);
-        })
-        addFilter(selectorsContainer, legend_settings, legend_settings.values);
+    filters = files[0].Filters;
+    selectors = files[0].Selectors;
+    data = files[1];
+    filters.forEach(f => {
+        let values = Array.from(new Set(files[1].map( d => d[f.name])));
+        addFilter(filtersContainer, f, values);
+    })
+    addFilter(selectorsContainer, legend_settings, legend_settings.values);
 
-        selectors.forEach(s => {
-            if (s.multi_select=='yes') {
-                filtersContainer.append("button")
-                    .attr('class', 'btn btn-secondary dropdown-toggle')
-                    .attr('type', 'button')
-                    .attr('id', `dropdownMenu_${s.id}`)
-                    .attr('data-bs-toggle', "dropdown")
-                    .attr('aria-expanded', "false")
-                    .text(s.name)
-
-                let dropdownLst = filtersContainer.append('ul')
-                                    .attr('id', `dropdown-menu_${s.id}`)
-                                    .attr('class', `dropdown-menu`)
-                                    .attr('aria-labelledby', `dropdownMenu_${s.id}`);
-
-                let list = dropdownLst.selectAll(".checkbox-li")
-                    .data(s.values);
-    
-                list.enter().append("li")
-                    .attr("class", "checkbox-li")
-                    .each(function(d, i) {
-                        let div = d3.select(this).append("div")
-                            .attr("class", "controlItem")
-                            .style("padding", "0 5px");
-
-                        div.append("input")
-                            .attr("type", "checkbox")
-                            .attr("class", "checkbox")
-                            .attr("value", d)
-                            .attr("id", "id-" + d.replace(/\W/g,'_'));
-                        
-                        div.append("label")
-                            .attr("class", "checkbox-label")
-                            .attr("for", "id-" + d.replace(/\W/g,'_'))
-                            .style("padding", "0 5px")
-                            .text(d);
-                    });
-            } else {
-                filtersContainer.append('label')
-                    .attr('id', `lbl_${s.id}`)
-                    .attr('class', `selectorLbl`)
-                    .text(s.name);
-
-                filtersContainer.append('select')
-                    .attr("name", `${s.id}`) 
-                    .attr("id", `lst_${s.id}`)
-                    .attr('class', `form-select selectorList`)
-                    .on('change', selctorSelectionChanged);
-                let dropdown = document.getElementById(`lst_${s.id}`)
-                s.values.forEach((v,i) => {
-                    let option = document.createElement("option");
-                        option.value = v;
-                        option.text = v;
-                    dropdown.appendChild(option)
-                })   
-            }
-        })
-
-        inputs.forEach(inp => {
-            let inpLbl = inp.replace(/\W/g,'_');
-            selectorsContainer.append('label')
-                .attr('id', `lbl_${inpLbl}`)
-                .attr('class', `selectorLbl`)
-                .text(inp);
-
-            selectorsContainer.append('input')
-                .attr("name", `${inpLbl}`) 
-                .attr("id", `${inpLbl}`)
-                .attr('class', `form-control selectorInput`);
-        })
-
-        selectorsContainer.append("button")
-                .attr('class', 'btn btn-primary')
+    selectors.forEach(s => {
+        if (s.multi_select=='yes') {
+            filtersContainer.append("button")
+                .attr('class', 'btn btn-secondary dropdown-toggle')
                 .attr('type', 'button')
-                .attr('id', `btnSubmit`)
-                .text('Display')
-                .on('click', display);
+                .attr('id', `dropdownMenu_${s.id}`)
+                .attr('data-bs-toggle', "dropdown")
+                .attr('aria-expanded', "false")
+                .text(s.name)
+
+            let dropdownLst = filtersContainer.append('ul')
+                                .attr('id', `dropdown-menu_${s.id}`)
+                                .attr('class', `dropdown-menu`)
+                                .attr('aria-labelledby', `dropdownMenu_${s.id}`);
+
+            let list = dropdownLst.selectAll(".checkbox-li")
+                .data(s.values);
+
+            list.enter().append("li")
+                .attr("class", "checkbox-li")
+                .each(function(d, i) {
+                    let div = d3.select(this).append("div")
+                        .attr("class", "controlItem")
+                        .style("padding", "0 5px");
+
+                    div.append("input")
+                        .attr("type", "checkbox")
+                        .attr("class", "checkbox")
+                        .attr("value", d)
+                        .attr("id", "id-" + d.replace(/\W/g,'_'));
+                    
+                    div.append("label")
+                        .attr("class", "checkbox-label")
+                        .attr("for", "id-" + d.replace(/\W/g,'_'))
+                        .style("padding", "0 5px")
+                        .text(d);
+                });
+        } else {
+            filtersContainer.append('label')
+                .attr('id', `lbl_${s.id}`)
+                .attr('class', `selectorLbl`)
+                .text(s.name);
+
+            filtersContainer.append('select')
+                .attr("name", `${s.id}`) 
+                .attr("id", `lst_${s.id}`)
+                .attr('class', `form-select selectorList`)
+                .on('change', selctorSelectionChanged);
+            let dropdown = document.getElementById(`lst_${s.id}`)
+            s.values.forEach((v,i) => {
+                let option = document.createElement("option");
+                    option.value = v;
+                    option.text = v;
+                dropdown.appendChild(option)
+            })   
+        }
+    })
+
+    inputs.forEach(inp => {
+        let inpLbl = inp.replace(/\W/g,'_');
+        selectorsContainer.append('label')
+            .attr('id', `lbl_${inpLbl}`)
+            .attr('class', `selectorLbl`)
+            .text(inp);
+
+        selectorsContainer.append('input')
+            .attr("name", `${inpLbl}`) 
+            .attr("id", `${inpLbl}`)
+            .attr('class', `form-control selectorInput`);
+    })
+
+    selectorsContainer.append("button")
+            .attr('class', 'btn btn-primary')
+            .attr('type', 'button')
+            .attr('id', `btnSubmit`)
+            .text('Display')
+            .on('click', display);
     });
+
+}
 
 function selctorSelectionChanged() {
     selector_values[this.name] = this.value;
@@ -326,6 +344,7 @@ function display() {
                         'c':colorByVal
                     })
     })
+    
     x_max = x_max==="" ? d3.max(plot_data, d => d.x) : +x_max
     y_min = y_min==="" ? 0 : +y_min;
     y_max = y_max==="" ? d3.max(plot_data, d => d.y) : +y_max;

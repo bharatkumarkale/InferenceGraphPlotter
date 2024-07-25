@@ -17,6 +17,20 @@
 <body>
   <div id="titlePane">
     <label id="title">LLM Inference Benchmarking</label>
+    <div class="dropdown configSelector">
+      <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+        Configuration
+      </button>
+      <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+        <li><button class="dropdown-item configButton active" type="button" datadir="Throughput">Throughput</button></li>
+        <li><button class="dropdown-item configButton" type="button" datadir="KV_Cache_Block_Size">KV Cache Block Size</button></li>
+        <li><button class="dropdown-item configButton" type="button" datadir="KV_Cache_Dtype">KV Cache dtype</button></li>
+        <li><button class="dropdown-item configButton" type="button" datadir="Parallelism">Parallelism</button></li>
+        <li><button class="dropdown-item configButton" type="button" datadir="Power">Power</button></li>
+        <li><button class="dropdown-item configButton" type="button" datadir="Quantization">Quantization</button></li>
+        <li><button class="dropdown-item configButton" type="button" datadir="StreamingLLM">StreamingLLM</button></li>
+      </ul>
+    </div>
   </div>
   <div id="controlBar">
     <div id="filterControls">
