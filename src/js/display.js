@@ -373,7 +373,7 @@ function display() {
 
     targetG.append('g')
         .attr("class", "y-axis")
-        .call(d3.axisLeft(y_scale).ticks(7))
+        .call(d3.axisLeft(y_scale).ticks(7).tickFormat(d3.format(".2s")))
     targetG.append('text')
         .attr('transform', `translate(${-90}, ${height/2}) rotate(-90)`)
         .attr('class', 'axisText')
