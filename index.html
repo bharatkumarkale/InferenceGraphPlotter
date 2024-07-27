@@ -28,7 +28,7 @@
         <li><button class="dropdown-item configButton" type="button" datadir="Parallelism">Parallelism</button></li>
         <li><button class="dropdown-item configButton" type="button" datadir="Power">Power</button></li>
         <li><button class="dropdown-item configButton" type="button" datadir="Quantization">Quantization</button></li>
-        <li><button class="dropdown-item configButton" type="button" datadir=""></button></li>
+        <li><button class="dropdown-item configButton" type="button" datadir="KV_Cache">KV Cache</button></li>
         <!-- <li><button class="dropdown-item configButton" type="button" datadir="StreamingLLM">StreamingLLM</button></li> -->
       </ul>
     </div>
@@ -42,7 +42,13 @@
     <div id="selectorControls">
     </div>
   </div>
-  <div id="canvas">
+  <div id="visPane">
+    <div id="canvas">
+    </div>
+    <div id="downloadPane">
+      <!-- <button type="button" id="btnDownloadPNG" class="btn btn-primary btnDownload">Download as PNG</button>
+      <button type="button" id="btnDownloadSVG" class="btn btn-primary btnDownload">Download as SVG</button> -->
+    </div>
   </div>
 
   <script src="./src/js/display.js"></script>

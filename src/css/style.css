@@ -62,11 +62,25 @@ html, body, div {
   /* background-color: lightgray; */
 }
 
+#visPane{
+  display: flex;
+  flex-direction: row;
+  margin-left: 100px;
+  width: 99%;
+  height: 84%;
+  padding-top: 20px;
+}
+
 #canvas {
   margin-left: 100px;
   width: 1080px;
   height: 700px;
-  padding-top: 20px;
+}
+
+#downloadPane {
+  padding-left: 10px;
+  width: 220px;
+  height: 700px;
 }
 
 .controlItemDiv {
@@ -141,4 +155,8 @@ html, body, div {
 .legendTitle {
   alignment-baseline: "hanging";
   text-anchor: middle;
+}
+
+.btnDownload {
+  margin: 5px;
 }

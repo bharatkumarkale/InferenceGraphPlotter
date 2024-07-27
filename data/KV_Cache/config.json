@@ -25,13 +25,13 @@
             "multi_select": "yes"
         },
         {
-            "name": "Parallelism Type",
+            "name": "KV Cache",
             "multi_select": "yes"
         }
     ],
     "Selectors":[
         {"id":"x", "name": "X-axis", "multi_select": "no", "values":["", "Input Output Length", "Batch Size", "Num of Hardware"]},
         {"id":"y", "name": "Y-axis", "multi_select": "no", "values":["", "Latency", "Throughput"]},
-        {"id":"c", "name": "Color By", "multi_select": "yes", "values":["Num of Hardware", "Hardware", "Input Output Length", "Batch Size", "Framework", "Model", "Parallelism Type"]}
+        {"id":"c", "name": "Color By", "multi_select": "yes", "values":["Num of Hardware", "Hardware", "Input Output Length", "Batch Size", "Framework", "Model", "KV Cache"]}
     ]
 }
