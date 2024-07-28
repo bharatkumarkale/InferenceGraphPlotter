@@ -347,3 +347,40 @@ Nvidia A100 GPU,4,TensorRT-LLM,meta-llama/Llama-2-7b-hf,1024,16,Hybird Tensor (2
 Nvidia A100 GPU,4,TensorRT-LLM,meta-llama/Llama-2-7b-hf,1024,32,Hybird Tensor (2) and Pipeline (2) Parallelism,28.302563786506653,2315.549944321458
 Nvidia A100 GPU,4,TensorRT-LLM,meta-llama/Llama-2-7b-hf,1024,64,Hybird Tensor (2) and Pipeline (2) Parallelism,40.26574354171753,3255.1739635504855
 Nvidia A100 GPU,4,TensorRT-LLM,meta-llama/Llama-2-7b-hf,2048,1,Hybird Tensor (2) and Pipeline (2) Parallelism,18.54688150882721,220.84575231963112
+Nvidia A100 GPU,4,TensorRT-LLM,mistralai/Mixtral-8x7B-v0.1,128,1,Tensor Parallelism = 4,1.0944568634033203,233.90597524688462
+Nvidia A100 GPU,4,TensorRT-LLM,mistralai/Mixtral-8x7B-v0.1,128,16,Tensor Parallelism = 4,1.4118134737014771,2901.2331135083673
+Nvidia A100 GPU,4,TensorRT-LLM,mistralai/Mixtral-8x7B-v0.1,128,32,Tensor Parallelism = 4,1.601908016204834,5113.901620523821
+Nvidia A100 GPU,4,TensorRT-LLM,mistralai/Mixtral-8x7B-v0.1,128,64,Tensor Parallelism = 4,1.9723223924636841,8306.958366747678
+Nvidia A100 GPU,4,TensorRT-LLM,mistralai/Mixtral-8x7B-v0.1,256,1,Tensor Parallelism = 4,2.197142481803894,233.0299487813092
+Nvidia A100 GPU,4,TensorRT-LLM,mistralai/Mixtral-8x7B-v0.1,256,16,Tensor Parallelism = 4,2.83434898853302,2890.258056838636
+Nvidia A100 GPU,4,TensorRT-LLM,mistralai/Mixtral-8x7B-v0.1,256,32,Tensor Parallelism = 4,3.280768632888794,4993.95167210359
+Nvidia A100 GPU,4,TensorRT-LLM,mistralai/Mixtral-8x7B-v0.1,256,64,Tensor Parallelism = 4,4.2103147268295285,7782.79110376034
+Nvidia A100 GPU,4,TensorRT-LLM,mistralai/Mixtral-8x7B-v0.1,512,1,Tensor Parallelism = 4,4.4608759641647335,229.55132763744902
+Nvidia A100 GPU,4,TensorRT-LLM,mistralai/Mixtral-8x7B-v0.1,512,16,Tensor Parallelism = 4,5.907789516448974,2773.287699973444
+Nvidia A100 GPU,4,TensorRT-LLM,mistralai/Mixtral-8x7B-v0.1,512,32,Tensor Parallelism = 4,7.169499373435974,4570.472538349072
+Nvidia A100 GPU,4,TensorRT-LLM,mistralai/Mixtral-8x7B-v0.1,512,64,Tensor Parallelism = 4,9.202732467651368,7121.363163643663
+Nvidia A100 GPU,4,TensorRT-LLM,mistralai/Mixtral-8x7B-v0.1,1024,1,Tensor Parallelism = 4,9.22297556400299,222.05415007205326
+Nvidia A100 GPU,4,TensorRT-LLM,mistralai/Mixtral-8x7B-v0.1,1024,16,Tensor Parallelism = 4,12.664768052101135,2587.3351857054863
+Nvidia A100 GPU,4,TensorRT-LLM,mistralai/Mixtral-8x7B-v0.1,1024,32,Tensor Parallelism = 4,15.19669575691223,4312.516421222086
+Nvidia A100 GPU,4,TensorRT-LLM,mistralai/Mixtral-8x7B-v0.1,1024,64,Tensor Parallelism = 4,20.279404997825623,6463.30600005541
+Nvidia A100 GPU,4,TensorRT-LLM,mistralai/Mixtral-8x7B-v0.1,2048,1,Tensor Parallelism = 4,19.74553508758545,207.43930118030914
+Nvidia A100 GPU,4,TensorRT-LLM,mistralai/Mixtral-8x7B-v0.1,2048,16,Tensor Parallelism = 4,28.016481637954712,2339.194508678654
+Nvidia A100 GPU,4,TensorRT-LLM,mistralai/Mixtral-8x7B-v0.1,2048,32,Tensor Parallelism = 4,35.223938775062564,3721.1057183870316
+Nvidia A100 GPU,4,TensorRT-LLM,mistralai/Mixtral-8x7B-v0.1,2048,64,Tensor Parallelism = 4,49.43631467819214,5302.660639378923
+Nvidia A100 GPU,4,TensorRT-LLM,mistralai/Mixtral-8x7B-v0.1,128,1,Pipeline Parallelism = 4,2.798696255683899,91.47116250292869
+Nvidia A100 GPU,4,TensorRT-LLM,mistralai/Mixtral-8x7B-v0.1,256,1,Pipeline Parallelism = 4,5.584914803504944,91.67552559238369
+Nvidia A100 GPU,4,TensorRT-LLM,mistralai/Mixtral-8x7B-v0.1,512,1,Pipeline Parallelism = 4,11.214724397659301,91.30853007976957
+Nvidia A100 GPU,4,TensorRT-LLM,mistralai/Mixtral-8x7B-v0.1,1024,1,Pipeline Parallelism = 4,22.730333757400512,90.09986487036139
+Nvidia A100 GPU,4,TensorRT-LLM,mistralai/Mixtral-8x7B-v0.1,2048,1,Pipeline Parallelism = 4,46.839400720596316,87.44774563690989
+Nvidia A100 GPU,4,TensorRT-LLM,mistralai/Mixtral-8x7B-v0.1,1024,16,Pipeline Parallelism = 4,52.450148129463194,624.7456140470459
+Nvidia A100 GPU,4,TensorRT-LLM,mistralai/Mixtral-8x7B-v0.1,2048,16,Pipeline Parallelism = 4,206.57868144512176,317.2447395904685
+Nvidia A100 GPU,4,TensorRT-LLM,mistralai/Mixtral-8x7B-v0.1,1024,32,Pipeline Parallelism = 4,104.06223020553588,629.7770081475117
+Nvidia A100 GPU,4,TensorRT-LLM,mistralai/Mixtral-8x7B-v0.1,2048,32,Pipeline Parallelism = 4,237.19115846157075,552.6006991581688
+Nvidia A100 GPU,4,TensorRT-LLM,mistralai/Mixtral-8x7B-v0.1,128,1,Expert Parallelism = 4,2.29119393825531,111.73213918108475
+Nvidia A100 GPU,4,TensorRT-LLM,mistralai/Mixtral-8x7B-v0.1,256,1,Expert Parallelism = 4,3.691018056869507,138.71511656441115
+Nvidia A100 GPU,4,TensorRT-LLM,mistralai/Mixtral-8x7B-v0.1,512,1,Expert Parallelism = 4,8.111860203742982,126.23491705731135
+Nvidia A100 GPU,4,TensorRT-LLM,mistralai/Mixtral-8x7B-v0.1,1024,1,Expert Parallelism = 4,15.419462323188782,132.81915783276602
+Nvidia A100 GPU,4,TensorRT-LLM,mistralai/Mixtral-8x7B-v0.1,128,1,Hybird Tensor (2) and Expert (2) Parallelism,1.3896436929702758,184.21988405734146
+Nvidia A100 GPU,4,TensorRT-LLM,mistralai/Mixtral-8x7B-v0.1,256,1,Hybird Tensor (2) and Expert (2) Parallelism,2.7997932195663453,182.8706478828114
+Nvidia A100 GPU,4,TensorRT-LLM,mistralai/Mixtral-8x7B-v0.1,512,1,Hybird Tensor (2) and Expert (2) Parallelism,5.59253191947937,183.10132418436478
+Nvidia A100 GPU,4,TensorRT-LLM,mistralai/Mixtral-8x7B-v0.1,1024,1,Hybird Tensor (2) and Expert (2) Parallelism,11.483972859382629,178.33549635453417
