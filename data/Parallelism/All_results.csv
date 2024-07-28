@@ -309,8 +309,6 @@ Nvidia A100 GPU,1,TensorRT-LLM,meta-llama/Meta-Llama-3-8B,2048,1,Pipeline Parall
 Nvidia A100 GPU,1,TensorRT-LLM,meta-llama/Meta-Llama-3-8B,2048,16,Pipeline Parallelism,49.25287228822708,1330.6026015393436
 Nvidia A100 GPU,1,TensorRT-LLM,meta-llama/Meta-Llama-3-8B,2048,32,Pipeline Parallelism,63.92402684688568,2050.434030289594
 Nvidia A100 GPU,1,TensorRT-LLM,meta-llama/Meta-Llama-3-8B,2048,64,Pipeline Parallelism,161.99349409341812,1618.2378278033023
-Nvidia A100 GPU,4,TensorRT-LLM,meta-llama/Meta-Llama-3-70B,1024,1,Pipeline Parallelism,111.88567099571227,18.304399319180774
-Nvidia A100 GPU,4,TensorRT-LLM,meta-llama/Meta-Llama-3-70B,2048,1,Pipeline Parallelism,226.56844725608826,18.078421993907778
 Nvidia A100 GPU,1,TensorRT-LLM,mistralai/Mistral-7B-v0.1,128,1,Pipeline Parallelism,1.672762656211853,153.04024097461559
 Nvidia A100 GPU,1,TensorRT-LLM,mistralai/Mistral-7B-v0.1,128,16,Pipeline Parallelism,1.9248948097229004,2127.908485861439
 Nvidia A100 GPU,1,TensorRT-LLM,mistralai/Mistral-7B-v0.1,128,32,Pipeline Parallelism,2.1499767303466797,3810.2737970931694
@@ -331,8 +329,6 @@ Nvidia A100 GPU,1,TensorRT-LLM,mistralai/Mistral-7B-v0.1,2048,1,Pipeline Paralle
 Nvidia A100 GPU,1,TensorRT-LLM,mistralai/Mistral-7B-v0.1,2048,16,Pipeline Parallelism,47.42074120044708,1382.0112959217543
 Nvidia A100 GPU,1,TensorRT-LLM,mistralai/Mistral-7B-v0.1,2048,32,Pipeline Parallelism,61.859402537345886,2118.869478586848
 Nvidia A100 GPU,1,TensorRT-LLM,mistralai/Mistral-7B-v0.1,2048,64,Pipeline Parallelism,158.58702480793,1652.9977803511435
-Nvidia A100 GPU,2,TensorRT-LLM,mistralai/Mistral-7B-v0.1,128,1,Pipeline Parallelism,1.6670166492462157,153.5677523771325
-Nvidia A100 GPU,4,TensorRT-LLM,mistralai/Mistral-7B-v0.1,128,1,Pipeline Parallelism,1.7054741144180299,150.10488745374863
 Nvidia A100 GPU,1,TensorRT-LLM,Qwen/Qwen2-7B,128,1,Pipeline Parallelism,1.6843978404998778,151.9830967748255
 Nvidia A100 GPU,1,TensorRT-LLM,Qwen/Qwen2-7B,128,16,Pipeline Parallelism,1.965310525894165,2084.1490166732947
 Nvidia A100 GPU,1,TensorRT-LLM,Qwen/Qwen2-7B,128,32,Pipeline Parallelism,2.1042845964431764,3893.0095358045905
@@ -351,4 +347,3 @@ Nvidia A100 GPU,4,TensorRT-LLM,meta-llama/Llama-2-7b-hf,1024,16,Hybird Tensor (2
 Nvidia A100 GPU,4,TensorRT-LLM,meta-llama/Llama-2-7b-hf,1024,32,Hybird Tensor (2) and Pipeline (2) Parallelism,28.302563786506653,2315.549944321458
 Nvidia A100 GPU,4,TensorRT-LLM,meta-llama/Llama-2-7b-hf,1024,64,Hybird Tensor (2) and Pipeline (2) Parallelism,40.26574354171753,3255.1739635504855
 Nvidia A100 GPU,4,TensorRT-LLM,meta-llama/Llama-2-7b-hf,2048,1,Hybird Tensor (2) and Pipeline (2) Parallelism,18.54688150882721,220.84575231963112
-Nvidia A100 GPU,4,TensorRT-LLM,mistralai/Mistral-7B-v0.1,128,1,Hybird Tensor (2) and Pipeline (2) Parallelism,1.0665686845779419,240.02204799525242
