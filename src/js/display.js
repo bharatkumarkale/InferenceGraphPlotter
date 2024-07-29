@@ -37,6 +37,7 @@ let filters = [],
 
 readFiles('Throughput')
 d3.selectAll('.configButton').on("click", configurationChanged)
+d3.select('#btnDownloadSVG').on("click", downloadSVG)
 
 function configurationChanged() {
     let curSel = d3.select(this);
