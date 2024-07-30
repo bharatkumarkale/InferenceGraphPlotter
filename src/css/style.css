@@ -1,3 +1,10 @@
+@font-face {
+  font-family:century schoolbook;
+  font-style:normal;
+  font-weight:700;
+  src:local('Century Schoolbook'),url(https://fonts.cdnfonts.com/s/56680/SCHLBKB.woff) format('woff')
+}
+
 html, body, div {
   height: 100%;
   width: 100%;
