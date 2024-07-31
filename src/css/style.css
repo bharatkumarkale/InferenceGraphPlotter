@@ -90,6 +90,11 @@ html, body, div {
   height: 700px;
 }
 
+.checkboxContainer {
+  width: 100px;
+  padding-top: 10px;
+}
+
 .controlItemDiv {
   display: flex;
   flex-direction: row;

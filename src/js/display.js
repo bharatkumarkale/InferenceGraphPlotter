@@ -5,7 +5,9 @@ const legend_settings = {
 };
 let filters = [],
     selectors = [],
-    inputs = ['Legend Title', 'X-axis Title', 'X-Max', 'Y-axis Title', 'Y-Min', 'Y-Max', 'Plot Title'],
+    gridLinesName = "Grid Lines",
+    showGridLines = true,
+    inputs = ['Legend Title', 'X-axis Title', 'X-Min', 'X-Max', 'Y-axis Title', 'Y-Min', 'Y-Max', 'Plot Title'],
     data = [],
     filtersContainer = d3.selectAll('#filterControls'),
     selectorsContainer = d3.select('#selectorControls'),
@@ -142,6 +144,8 @@ function readFiles(config) {
         addFilter(filtersContainer, f, values);
     })
     addFilter(selectorsContainer, legend_settings, legend_settings.values);
+
+    addCheckbox(filtersContainer, gridLinesName, showGridLines);
 
     selectors.forEach(s => {
         if (s.multi_select=='yes') {
@@ -288,6 +292,27 @@ function addFilter(container, f, values) {
     }
 }
 
+function addCheckbox(container, name, value) {
+    let checkDiv = container.append("div")
+                    .attr('class', 'form-check checkboxContainer')
+
+    let checkbox = checkDiv.append("input")
+                        .attr("type", "checkbox")
+                        .attr("class", "form-check-input")
+                        .attr("value", "")
+                        .attr("id", "id-" + name.replace(/\W/g,'_'));
+    if (value==true) {
+        checkbox.attr("checked", true)
+    }
+    checkDiv.append("label")
+        .attr("type", "checkbox")
+        .attr("class", "form-check-label")
+        .attr("for", "id-" + name.replace(/\W/g,'_'))
+        .text(name);
+
+    
+}
+
 function legedPositionChanged(params) {
     legend_position = this.value;
 }
@@ -310,6 +335,7 @@ function getFilters() {
 }
 
 function display() {
+    showGridLines = d3.select("#id-" + gridLinesName.replace(/\W/g,'_')).node().checked;
     title = d3.select('#Plot_Title').node().value;
     color_scale = d3.scaleOrdinal(d3.schemeCategory10);
     getFilters();
@@ -333,6 +359,7 @@ function display() {
     let plot_data = [],
         y_min = d3.select('#Y_Min').node().value,
         y_max = d3.select('#Y_Max').node().value,
+        x_min = d3.select('#X_Min').node().value;
         x_max = d3.select('#X_Max').node().value;
 
     filtered_data.forEach(fd => {
@@ -346,32 +373,41 @@ function display() {
                     })
     })
     
+    x_min = x_min==="" ? 0 : +x_min;
     x_max = x_max==="" ? d3.max(plot_data, d => d.x) : +x_max
     y_min = y_min==="" ? 0 : +y_min;
     y_max = y_max==="" ? d3.max(plot_data, d => d.y) : +y_max;
 
     init(plot_data);
-    x_scale.domain([0, x_max]);
+    x_scale.domain([x_min, x_max]);
     y_scale.domain([y_min, y_max]);
     line.x((d) => x_scale(d.x))
         .y((d) => y_scale(d.y));
+    color_scale.domain(plot_data.map(d => d.c));
+    if (color_scale.domain().length>10) {
+        color_scale = d3.scaleOrdinal(d3.schemePaired);
+    }
 
     targetG.selectAll('*').remove();
-    targetG.append('g')
-        .attr("class", "x-axis")
-        .attr('transform', 'translate(0,' + height + ')')
-        .call(d3.axisBottom(x_scale).tickValues(d3.map(plot_data, d => d.x)).tickFormat(d3.format("d")))
+    if (showGridLines) {
+        targetG.append('g')
+            .attr("class", "x-axis")
+            .attr('transform', 'translate(0,' + height + ')')
+            .call(d3.axisBottom(x_scale).tickValues(d3.map(plot_data, d => d.x)).tickFormat(d3.format("d")))
+    } else {
+        targetG.append('g')
+            .attr("class", "x-axis")
+            .attr('transform', 'translate(0,' + height + ')')
+            .call(d3.axisBottom(x_scale).tickFormat(d3.format(".2s")))
+    }
+    
     targetG.append('text')
         .attr('transform', `translate(${width/2}, ${height+30})`)
         .attr('class', 'axisText')
         .style('alignment-baseline', 'hanging')
         .style('text-anchor', 'middle')
         .text(d3.select('#X_axis_Title').node().value);
-    targetG.append('g')
-        .attr('class', 'x axis-grid')
-        .attr('transform', 'translate(0,' + height + ')')
-        .call(d3.axisBottom(x_scale).tickSize(-height).tickValues(d3.map(plot_data, d => d.x)).tickFormat(''));
-
+    
     targetG.append('g')
         .attr("class", "y-axis")
         .call(d3.axisLeft(y_scale).ticks(7).tickFormat(d3.format(".2s")))
@@ -380,9 +416,17 @@ function display() {
         .attr('class', 'axisText')
         .text(d3.select('#Y_axis_Title').node().value)
         .style("text-anchor", "middle");
-    targetG.append('g')
-        .attr('class', 'y axis-grid')
-        .call(d3.axisLeft(y_scale).tickSize(-width).tickFormat(''));
+    
+    if (showGridLines) {
+        targetG.append('g')
+            .attr('class', 'x axis-grid')
+            .attr('transform', 'translate(0,' + height + ')')
+            .call(d3.axisBottom(x_scale).tickSize(-height).tickValues(d3.map(plot_data, d => d.x)).tickFormat(''));
+        
+        targetG.append('g')
+            .attr('class', 'y axis-grid')
+            .call(d3.axisLeft(y_scale).tickSize(-width).tickFormat(''));
+    }
 
     let titleG = targetG.append('g')
                     .attr('transform', `translate(0, ${-0.99 * margin.t})`)
