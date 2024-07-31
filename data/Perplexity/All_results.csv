@@ -1,0 +1,2 @@
+Hardware,Num of Hardware,Framework,Model,Input Output Length,Batch Size,Latency,Throughput,avg_power,Throughput_per_watt_avg,Perplexity
+Nvidia A100 GPU,1,vLLM,meta-llama/Llama-2-7b-hf,1024,32,45.96582124847919,1425.755011440556,484758.11279826466,0.002941167922307457,2.9624337637748193
