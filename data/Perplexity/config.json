@@ -26,7 +26,7 @@
         }
     ],
     "Selectors":[
-        {"id":"x", "name": "X-axis", "multi_select": "no", "values":["", "Input Output Length", "Batch Size", "Num of Hardware"]},
+        {"id":"x", "name": "X-axis", "multi_select": "no", "values":["", "Input Output Length", "Batch Size", "Num of Hardware", "Throughput", "Perplexity"]},
         {"id":"y", "name": "Y-axis", "multi_select": "no", "values":["", "Latency", "Throughput", "avg_power", "Throughput_per_watt_avg", "Perplexity"]},
         {"id":"c", "name": "Color By", "multi_select": "yes", "values":["Num of Hardware", "Hardware", "Input Output Length", "Batch Size", "Framework", "Model"]}
     ]

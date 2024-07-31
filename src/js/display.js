@@ -455,12 +455,12 @@ function updateLegend_right(legend_items) {
 
     legendG.selectAll('*').remove();
     
-    legendG.append('rect')
-        .attr("x", -0.025 * margin.r)
-        .attr("y", 0)
-        .attr("width", legend_width)
-        .attr("height", legend_height)
-        .attr("class", 'bbox')
+    // legendG.append('rect')
+    //     .attr("x", -0.025 * margin.r)
+    //     .attr("y", 0)
+    //     .attr("width", legend_width)
+    //     .attr("height", legend_height)
+    //     .attr("class", 'bbox')
 
     legendG.selectAll(".legendTitle")
         .data([1])
