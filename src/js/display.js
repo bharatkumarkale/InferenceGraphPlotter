@@ -58,8 +58,11 @@ inputs2 = [
 
 let filters = [],
     selectors = [],
-    gridLinesName = "Grid On Data Points",
-    showGridLines = true,
+    aliases = {},
+    xGridLinesName = "Vertical Grid Lines on Data",
+    yGridLinesName = "Horizontal Grid Lines",
+    showGridLinesOnX = true,
+    showGridLinesOnY = true,
     data = [],
     filtersContainer = d3.selectAll('#filterControls'),
     selectorsContainer1 = d3.select('#selectorControls1'),
@@ -103,6 +106,7 @@ function configurationChanged() {
 }
 
 function init(plot_data) { 
+    plot_data = updateColorLabels(plot_data);
     let fig_width = d3.select('#Fig_Width').node().value,
         fig_height = d3.select('#Fig_Height').node().value,
         top_margin = 0,
@@ -155,16 +159,16 @@ function init(plot_data) {
             } else {
                 top_margin = 35; 
             }
-            margin = {'t':top_margin, 'l':90, 'r':10, 'b':0};
+            margin = {'t':top_margin, 'l':90, 'r':25, 'b':0};
             legend_width = total_width - margin.l;
             legend_start_x = margin.l;
-            n_cols = Math.floor(legend_width/(legend_item_max_length*10+legend_icon_padding+marker_radius*2));
+            n_cols = Math.floor(legend_width/(legend_item_max_length*15+legend_icon_padding+marker_radius*2));
             if(n_cols>legend_items.length) {
                 n_cols = legend_items.length;
             }
             n_rows = Math.ceil(legend_items.length/n_cols);
-            legend_height = (n_rows)*32;
-            margin.b = 65 + (n_rows)*32;
+            legend_height = (n_rows+1)*30;
+            margin.b = 65 + (n_rows+1)*30;
             break;
             
         case 'Top Left':
@@ -192,6 +196,18 @@ function init(plot_data) {
     x_scale.range([0, width]);
     y_scale.range([height, 0]);
     legend_title = d3.select('#Legend_Title').node().value;
+
+    return plot_data;
+}
+
+function updateColorLabels(plot_data) {
+    for (let i = 0; i < plot_data.length; i++) {
+        Object.keys(aliases).forEach(d => {
+            let c = plot_data[i]['c'];
+            plot_data[i]['c'] = c.replace(d, aliases[d]);
+        })
+    }
+    return plot_data;
 }
 
 function readFiles(config) {
@@ -202,18 +218,21 @@ function readFiles(config) {
     legendG.selectAll('*').remove();
 
     Promise.all([ d3.json(`./data/${config}/config.json`, {credentials: 'same-origin'}),
-        d3.csv(`./data/${config}/All_results.csv`, {credentials: 'same-origin'})])
+        d3.csv(`./data/${config}/All_results.csv`, {credentials: 'same-origin'}),
+        d3.json(`./data/alias.json`, {credentials: 'same-origin'})])
     .then(files => {
     filters = files[0].Filters;
     selectors = files[0].Selectors;
     data = files[1];
+    aliases = files[2];
     filters.forEach(f => {
         let values = Array.from(new Set(files[1].map( d => d[f.name])));
         addFilter(filtersContainer, f, values);
     })
     addFilter(selectorsContainer1, legend_settings, legend_settings.values);
 
-    addCheckbox(filtersContainer, gridLinesName, showGridLines);
+    addCheckbox(filtersContainer, xGridLinesName, showGridLinesOnX);
+    addCheckbox(filtersContainer, yGridLinesName, showGridLinesOnY);
 
     selectors.forEach(s => {
         if (s.multi_select=='yes') {
@@ -377,7 +396,6 @@ function addCheckbox(container, name, value) {
 }
 
 function addSelector(container, inp) {
-    console.log(inp);
     let inpLbl = inp.name.replace(/\W/g,'_');
     container.append('label')
         .attr('id', `lbl_${inpLbl}`)
@@ -413,7 +431,8 @@ function getFilters() {
 }
 
 function display() {
-    showGridLines = d3.select("#id-" + gridLinesName.replace(/\W/g,'_')).node().checked;
+    showGridLinesOnX = d3.select("#id-" + xGridLinesName.replace(/\W/g,'_')).node().checked;
+    showGridLinesOnY = d3.select("#id-" + yGridLinesName.replace(/\W/g,'_')).node().checked;
     title = d3.select('#Plot_Title').node().value;
     color_scale = d3.scaleOrdinal(d3.schemeCategory10);
     getFilters();
@@ -456,7 +475,7 @@ function display() {
     y_min = y_min==="" ? 0 : +y_min;
     y_max = y_max==="" ? d3.max(plot_data, d => d.y) : +y_max;
 
-    init(plot_data);
+    plot_data = init(plot_data);
     x_scale.domain([x_min, x_max]);
     y_scale.domain([y_min, y_max]);
     line.x((d) => x_scale(d.x))
@@ -467,7 +486,7 @@ function display() {
     }
 
     targetG.selectAll('*').remove();
-    if (showGridLines) {
+    if (showGridLinesOnX) {
         targetG.append('g')
             .attr("class", "x-axis")
             .attr('transform', 'translate(0,' + height + ')')
@@ -476,7 +495,7 @@ function display() {
         targetG.append('g')
             .attr("class", "x-axis")
             .attr('transform', 'translate(0,' + height + ')')
-            .call(d3.axisBottom(x_scale).tickFormat(d3.format(".2s")))
+            .call(d3.axisBottom(x_scale).ticks(5).tickFormat(d3.format(".2s")))
     }
 
     targetG.append('text')
@@ -497,7 +516,7 @@ function display() {
         .style("text-anchor", "middle")
         .style('font-size', `${d3.select('#Font_Size').node().value}px`);
     
-    if (showGridLines) {
+    if (showGridLinesOnX) {
         targetG.append('g')
             .attr('class', 'x axis-grid')
             .attr('transform', 'translate(0,' + height + ')')
@@ -508,10 +527,11 @@ function display() {
             .attr('transform', 'translate(0,' + height + ')')
             .call(d3.axisBottom(x_scale).ticks(5).tickSize(-height).tickFormat(''));
     }
-
-    targetG.append('g')
-        .attr('class', 'y axis-grid')
-        .call(d3.axisLeft(y_scale).tickSize(-width).tickFormat(''));
+    if (showGridLinesOnY) {
+        targetG.append('g')
+            .attr('class', 'y axis-grid')
+            .call(d3.axisLeft(y_scale).tickSize(-width).tickFormat(''));
+    }
 
     d3.selectAll(".x-axis text").style('font-size', `${d3.select('#Font_Size').node().value}px`);
     d3.selectAll(".y-axis text").style('font-size', `${d3.select('#Font_Size').node().value}px`);
@@ -625,9 +645,9 @@ function updateLegend_bottom(legend_items) {
     legendG.selectAll('*').remove();
     legendG.attr('transform', `translate(${legend_start_x}, ${total_height-legend_height+5})`)
 
-    let legend_y_scale = d3.scaleBand().domain([...Array(n_rows).keys()]).range([legend_height,35]),
+    let legend_y_scale = d3.scaleBand().domain([...Array(n_rows).keys()]).range([35, legend_height,]),
         legend_x_scale = d3.scaleBand().domain([...Array(n_cols).keys()]).range([0, legend_width]);
-    
+
     // legendG.append('rect')
     //     .attr("x", 1)
     //     .attr("y", 0)
@@ -646,10 +666,8 @@ function updateLegend_bottom(legend_items) {
     legendG.selectAll(".legendIcon")
         .data(legend_items)
         .join('circle')
-            .attr('cx', (d,i) => {
-                return legend_x_scale(Math.floor(i/n_rows));
-            })
-            .attr('cy', (d,i) => legend_y_scale(i%n_rows))
+            .attr('cx', (d,i) => legend_x_scale(i%n_cols))
+            .attr('cy', (d,i) => legend_y_scale(Math.floor(i/n_cols)))
             .attr('r', marker_radius)
             .attr('fill', d => color_scale(d))
             .attr("class", 'legendIcon')
@@ -657,8 +675,8 @@ function updateLegend_bottom(legend_items) {
     legendG.selectAll(".legendIconText")
         .data(legend_items)
         .join('text')
-            .attr('x', (d,i) => legend_x_scale(Math.floor(i/n_rows))+2*marker_radius)
-            .attr('y', (d,i) => legend_y_scale(i%n_rows))
+            .attr('x', (d,i) => legend_x_scale(i%n_cols)+2*marker_radius)
+            .attr('y', (d,i) => legend_y_scale(Math.floor(i/n_cols)))
             .attr("class", 'legendIconText')
             .style('alignment-baseline', 'middle')
             .style('font-size', `${d3.select('#Font_Size').node().value}px`)
