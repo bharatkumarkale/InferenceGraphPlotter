@@ -1,4 +1,4 @@
-Hardware,Num of Hardware,Framework,Model,Input Output Length,Batch Size,speculative model,num speculative tokens,latency,throughput,speculative_decoding
+Hardware,Num of Hardware,Framework,Model,Input Output Length,Batch Size,speculative model,num speculative tokens,Latency,Throughput,speculative_decoding
 Nvidia A100 GPU,1,vLLM,meta-llama/Llama-2-7b-hf,128,64,JackFram/llama-68m,3,5.719833324663341,2864.4191307732435,With Speculative Decoding
 Nvidia A100 GPU,1,vLLM,meta-llama/Llama-2-7b-hf,128,64,None,None,3.2083120895549655,5106.735112628234,Without Speculative Decoding
 Nvidia A100 GPU,1,vLLM,meta-llama/Llama-2-7b-hf,256,64,JackFram/llama-68m,3,13.597492717206478,2409.8560434259225,With Speculative Decoding
