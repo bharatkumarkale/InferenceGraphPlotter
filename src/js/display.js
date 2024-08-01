@@ -51,6 +51,10 @@ inputs2 = [
                 'val': '5'
             },
             {
+                'name':'Line Size',
+                'val': '1'
+            },
+            {
                 'name':'Plot Title',
                 'val': ''
             }
@@ -559,7 +563,7 @@ function display() {
             .datum(item[1])
                 .attr('fill', 'transparent')
                 .attr('stroke', color_scale(item[0]))
-                .attr('stroke-width', '2px')
+                .attr('stroke-width', `${d3.select('#Line_Size').node().value}px`)
                 .attr('d', line)
       })
     targetG.selectAll('circle')
