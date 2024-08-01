@@ -29,7 +29,7 @@
     "Without": "w/o",
     "With": "w",
     "Nvidia A100 GPU": "A100",
-    "Nvidia H100 GPU": "A100",
+    "Nvidia H100 GPU": "H100",
     "Nvidia GH200 GPU": "GH200",
     "Intel PVC GPU": "PVC",
     "AMD MI250": "MI250",
