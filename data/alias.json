@@ -34,7 +34,8 @@
     "Intel PVC GPU": "PVC",
     "AMD MI250": "MI250",
     "Habana Gaudi2": "Gaudi2",
-    "SambaNova SN40L": "SN40L"
+    "SambaNova SN40L": "SN40L",
+    "Weight":"W"
 }
 
 
