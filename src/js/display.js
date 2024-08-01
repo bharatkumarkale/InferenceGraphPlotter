@@ -13,6 +13,10 @@ const inputs1 = [
                         'val': ''
                     },
                     {
+                        'name':'X Title Pad',
+                        'val': ''
+                    },
+                    {
                         'name':'X-Min',
                         'val': ''
                     },
@@ -25,6 +29,10 @@ const inputs1 = [
                         'val': ''
                     },
                     {
+                        'name':'Y Title Pad',
+                        'val': ''
+                    },
+                    {
                         'name':'Y-Min',
                         'val': ''
                     },
@@ -34,6 +42,10 @@ const inputs1 = [
                     }
                 ],
 inputs2 = [
+            {
+                'name':'Legend Font Size',
+                'val': '21'
+            },
             {
                 'name':'Font Size',
                 'val': '21'
@@ -128,6 +140,7 @@ function init(plot_data) {
     }
         
     legend_items = [... new Set(d3.map(plot_data, d=>d['c']))];
+    legend_title = d3.select('#Legend_Title').node().value;
 
     let legend_item_max_length = d3.max(legend_items.map(d => d.length));
 
@@ -173,6 +186,10 @@ function init(plot_data) {
             n_rows = Math.ceil(legend_items.length/n_cols);
             legend_height = (n_rows+1)*30;
             margin.b = 65 + (n_rows+1)*30;
+            if (legend_title=="") {
+                legend_height = (n_rows)*32;
+                margin.b = 65 + (n_rows)*32;
+            }
             break;
             
         case 'Top Left':
@@ -199,7 +216,6 @@ function init(plot_data) {
     targetG.attr('transform', `translate(${margin.l}, ${margin.t})`);
     x_scale.range([0, width]);
     y_scale.range([height, 0]);
-    legend_title = d3.select('#Legend_Title').node().value;
 
     return plot_data;
 }
@@ -503,7 +519,7 @@ function display() {
     }
 
     targetG.append('text')
-        .attr('transform', `translate(${width/2}, ${height+30})`)
+        .attr('transform', `translate(${width/2}, ${height+(+d3.select('#X_Title_Pad').node().value)})`)
         .attr('class', 'axisText')
         .style('alignment-baseline', 'hanging')
         .style('text-anchor', 'middle')
@@ -514,7 +530,7 @@ function display() {
         .attr("class", "y-axis")
         .call(d3.axisLeft(y_scale).ticks(5).tickFormat(d3.format(".2s")))
     targetG.append('text')
-        .attr('transform', `translate(${-60}, ${height/2}) rotate(-90)`)
+        .attr('transform', `translate(${-d3.select('#Y_Title_Pad').node().value}, ${height/2}) rotate(-90)`)
         .attr('class', 'axisText')
         .text(d3.select('#Y_axis_Title').node().value)
         .style("text-anchor", "middle")
@@ -647,25 +663,26 @@ function updateLegend_right(legend_items) {
 
 function updateLegend_bottom(legend_items) {
     legendG.selectAll('*').remove();
-    legendG.attr('transform', `translate(${legend_start_x}, ${total_height-legend_height+5})`)
+    legendG.attr('transform', `translate(${legend_start_x}, ${total_height-legend_height})`)
 
-    let legend_y_scale = d3.scaleBand().domain([...Array(n_rows).keys()]).range([35, legend_height,]),
+    let legend_y_scale = d3.scaleBand().domain([...Array(n_rows).keys()]).range([0, legend_height,]),
         legend_x_scale = d3.scaleBand().domain([...Array(n_cols).keys()]).range([0, legend_width]);
-
+    if (legend_title!="") {
+        legend_y_scale = d3.scaleBand().domain([...Array(n_rows).keys()]).range([35, legend_height,]);
+        legendG.selectAll(".legendTitle")
+            .data([legend_title])
+            .join('text')
+                .attr('transform', `translate(${legend_width/2}, 10)`)
+                .attr("class", 'legendTitle')
+                .style('font-size', `${d3.select('#Legend_Font_Size').node().value}px`)
+                .text(d => d)
+    }
     // legendG.append('rect')
     //     .attr("x", 1)
     //     .attr("y", 0)
     //     .attr("width", legend_width-3)
     //     .attr("height", legend_height)
     //     .attr("class", 'bbox')
-
-    legendG.selectAll(".legendTitle")
-        .data([legend_title])
-        .join('text')
-            .attr('transform', `translate(${legend_width/2}, 10)`)
-            .attr("class", 'legendTitle')
-            .style('font-size', `${d3.select('#Font_Size').node().value}px`)
-            .text(d => d)
 
     legendG.selectAll(".legendIcon")
         .data(legend_items)
@@ -683,7 +700,7 @@ function updateLegend_bottom(legend_items) {
             .attr('y', (d,i) => legend_y_scale(Math.floor(i/n_cols)))
             .attr("class", 'legendIconText')
             .style('alignment-baseline', 'middle')
-            .style('font-size', `${d3.select('#Font_Size').node().value}px`)
+            .style('font-size', `${d3.select('#Legend_Font_Size').node().value}px`)
             .text(d => d)  
 }
 
