@@ -25,7 +25,16 @@
     "Expert Parallelism": "EP",
     "Tensor (2) and Expert (2) Parallelism": "TP & PP",
     "Deepspeed": "DS",
-    "TensorRT-LLM": "TRT-LLM"
+    "TensorRT-LLM": "TRT-LLM",
+    "Without": "w/o",
+    "With": "w",
+    "Nvidia A100 GPU": "A100",
+    "Nvidia H100 GPU": "A100",
+    "Nvidia GH200 GPU": "GH200",
+    "Intel PVC GPU": "PVC",
+    "AMD MI250": "MI250",
+    "Habana Gaudi2": "Gaudi2",
+    "SambaNova SN40L": "SN40L"
 }
 
 
