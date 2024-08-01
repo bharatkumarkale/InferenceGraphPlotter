@@ -3,19 +3,72 @@ const legend_settings = {
     'multi_select': 'no',
     'values': ['Bottom', 'Right', 'Top Left', 'Top Right', 'Bottom Left', 'Bottom Right']
 };
+const inputs1 = [
+                    {
+                        'name':'Legend Title',
+                        'val': ''
+                    },
+                    {
+                        'name':'X-axis Title',
+                        'val': ''
+                    },
+                    {
+                        'name':'X-Min',
+                        'val': ''
+                    },
+                    {
+                        'name':'X-Max',
+                        'val': ''
+                    },
+                    {
+                        'name':'Y-axis Title',
+                        'val': ''
+                    },
+                    {
+                        'name':'Y-Min',
+                        'val': ''
+                    },
+                    {
+                        'name':'Y-Max',
+                        'val': ''
+                    }
+                ],
+inputs2 = [
+            {
+                'name':'Font Size',
+                'val': '21'
+            },
+            {
+                'name':'Fig Width',
+                'val': '1080'
+            },
+            {
+                'name':'Fig Height',
+                'val': '700'
+            },
+            {
+                'name':'Point Size',
+                'val': '5'
+            },
+            {
+                'name':'Plot Title',
+                'val': ''
+            }
+        ];
+
 let filters = [],
     selectors = [],
-    gridLinesName = "Grid Lines",
+    gridLinesName = "Grid On Data Points",
     showGridLines = true,
-    inputs = ['Legend Title', 'X-axis Title', 'X-Min', 'X-Max', 'Y-axis Title', 'Y-Min', 'Y-Max', 'Plot Title'],
     data = [],
     filtersContainer = d3.selectAll('#filterControls'),
-    selectorsContainer = d3.select('#selectorControls'),
+    selectorsContainer1 = d3.select('#selectorControls1'),
+    selectorsContainer2 = d3.select('#selectorControls2'),
     filters_values = {},
     selector_values = {},
     targetEle = d3.selectAll('#canvas'),
     total_width = targetEle.node().getBoundingClientRect().width,
-    total_height = targetEle.node().getBoundingClientRect().height-20,
+    total_height = targetEle.node().getBoundingClientRect().height,
     margin,
     width,
     height,
@@ -30,10 +83,11 @@ let filters = [],
     legend_height,
     legend_position = 'Bottom',
     legendG = targetSVG.append('g'),
-    legend_icon_radius = 7,
+    marker_radius = 7,
     legend_icon_padding = 2,
     legend_items,
     legend_start_x = 0,
+    legend_start_y = 0,
     n_rows,
     n_cols;
 
@@ -49,8 +103,21 @@ function configurationChanged() {
 }
 
 function init(plot_data) { 
-    let top_margin = 0,
+    let fig_width = d3.select('#Fig_Width').node().value,
+        fig_height = d3.select('#Fig_Height').node().value,
+        top_margin = 0,
         right_margin = 0;
+
+    total_width = targetEle.node().getBoundingClientRect().width;
+    total_height = targetEle.node().getBoundingClientRect().height;
+    marker_radius = +d3.select('#Point_Size').node().value;
+
+    if (fig_width!='') {
+        total_width = +fig_width;
+    }
+    if (fig_height!='') {
+        total_height = +fig_height;
+    }
         
     legend_items = [... new Set(d3.map(plot_data, d=>d['c']))];
 
@@ -88,16 +155,16 @@ function init(plot_data) {
             } else {
                 top_margin = 35; 
             }
-            legend_width = total_width;
-            legend_start_x = 0.01*total_width;
-            n_cols = Math.floor(legend_width/(legend_item_max_length*10+legend_icon_padding+legend_icon_radius*2));
+            margin = {'t':top_margin, 'l':90, 'r':10, 'b':0};
+            legend_width = total_width - margin.l;
+            legend_start_x = margin.l;
+            n_cols = Math.floor(legend_width/(legend_item_max_length*10+legend_icon_padding+marker_radius*2));
             if(n_cols>legend_items.length) {
                 n_cols = legend_items.length;
-                legend_start_x = 100;
             }
             n_rows = Math.ceil(legend_items.length/n_cols);
-            margin = {'t':top_margin, 'l':120, 'r':25, 'b':65 + (n_rows+1)*35};
-            legend_height =  (n_rows+1)*30;
+            legend_height = (n_rows)*32;
+            margin.b = 65 + (n_rows)*32;
             break;
             
         case 'Top Left':
@@ -120,7 +187,7 @@ function init(plot_data) {
     width = total_width - margin.l - margin.r;
     height = total_height - margin.t - margin.b;
     targetSVG.attr('width', total_width)
-            .attr('height', total_height);
+        .attr('height', total_height);
     targetG.attr('transform', `translate(${margin.l}, ${margin.t})`);
     x_scale.range([0, width]);
     y_scale.range([height, 0]);
@@ -129,7 +196,8 @@ function init(plot_data) {
 
 function readFiles(config) {
     filtersContainer.selectAll("*").remove();
-    selectorsContainer.selectAll("*").remove();
+    selectorsContainer1.selectAll("*").remove();
+    selectorsContainer2.selectAll("*").remove();
     targetG.selectAll('*').remove();
     legendG.selectAll('*').remove();
 
@@ -143,7 +211,7 @@ function readFiles(config) {
         let values = Array.from(new Set(files[1].map( d => d[f.name])));
         addFilter(filtersContainer, f, values);
     })
-    addFilter(selectorsContainer, legend_settings, legend_settings.values);
+    addFilter(selectorsContainer1, legend_settings, legend_settings.values);
 
     addCheckbox(filtersContainer, gridLinesName, showGridLines);
 
@@ -205,20 +273,15 @@ function readFiles(config) {
         }
     })
 
-    inputs.forEach(inp => {
-        let inpLbl = inp.replace(/\W/g,'_');
-        selectorsContainer.append('label')
-            .attr('id', `lbl_${inpLbl}`)
-            .attr('class', `selectorLbl`)
-            .text(inp);
-
-        selectorsContainer.append('input')
-            .attr("name", `${inpLbl}`) 
-            .attr("id", `${inpLbl}`)
-            .attr('class', `form-control selectorInput`);
+    inputs1.forEach(inp => {
+        addSelector(selectorsContainer1, inp);
     })
 
-    selectorsContainer.append("button")
+    inputs2.forEach(inp => {
+        addSelector(selectorsContainer2, inp);
+    })
+
+    selectorsContainer2.append("button")
             .attr('class', 'btn btn-primary')
             .attr('type', 'button')
             .attr('id', `btnSubmit`)
@@ -298,7 +361,7 @@ function addCheckbox(container, name, value) {
 
     let checkbox = checkDiv.append("input")
                         .attr("type", "checkbox")
-                        .attr("class", "form-check-input")
+                        .attr("class", "form-check-input independentChkBx")
                         .attr("value", "")
                         .attr("id", "id-" + name.replace(/\W/g,'_'));
     if (value==true) {
@@ -311,6 +374,21 @@ function addCheckbox(container, name, value) {
         .text(name);
 
     
+}
+
+function addSelector(container, inp) {
+    console.log(inp);
+    let inpLbl = inp.name.replace(/\W/g,'_');
+    container.append('label')
+        .attr('id', `lbl_${inpLbl}`)
+        .attr('class', `selectorLbl`)
+        .text(inp.name);
+
+    let inpEle = container.append('input')
+                    .attr("name", `${inpLbl}`) 
+                    .attr("id", `${inpLbl}`)
+                    .attr('class', `form-control selectorInput`);
+    inpEle.node().value = inp.val;
 }
 
 function legedPositionChanged(params) {
@@ -400,33 +478,43 @@ function display() {
             .attr('transform', 'translate(0,' + height + ')')
             .call(d3.axisBottom(x_scale).tickFormat(d3.format(".2s")))
     }
-    
+
     targetG.append('text')
         .attr('transform', `translate(${width/2}, ${height+30})`)
         .attr('class', 'axisText')
         .style('alignment-baseline', 'hanging')
         .style('text-anchor', 'middle')
+        .style('font-size', `${d3.select('#Font_Size').node().value}px`)
         .text(d3.select('#X_axis_Title').node().value);
     
     targetG.append('g')
         .attr("class", "y-axis")
-        .call(d3.axisLeft(y_scale).ticks(7).tickFormat(d3.format(".2s")))
+        .call(d3.axisLeft(y_scale).ticks(5).tickFormat(d3.format(".2s")))
     targetG.append('text')
-        .attr('transform', `translate(${-90}, ${height/2}) rotate(-90)`)
+        .attr('transform', `translate(${-60}, ${height/2}) rotate(-90)`)
         .attr('class', 'axisText')
         .text(d3.select('#Y_axis_Title').node().value)
-        .style("text-anchor", "middle");
+        .style("text-anchor", "middle")
+        .style('font-size', `${d3.select('#Font_Size').node().value}px`);
     
     if (showGridLines) {
         targetG.append('g')
             .attr('class', 'x axis-grid')
             .attr('transform', 'translate(0,' + height + ')')
             .call(d3.axisBottom(x_scale).tickSize(-height).tickValues(d3.map(plot_data, d => d.x)).tickFormat(''));
-        
+    } else {    
         targetG.append('g')
-            .attr('class', 'y axis-grid')
-            .call(d3.axisLeft(y_scale).tickSize(-width).tickFormat(''));
+            .attr('class', 'x axis-grid')
+            .attr('transform', 'translate(0,' + height + ')')
+            .call(d3.axisBottom(x_scale).ticks(5).tickSize(-height).tickFormat(''));
     }
+
+    targetG.append('g')
+        .attr('class', 'y axis-grid')
+        .call(d3.axisLeft(y_scale).tickSize(-width).tickFormat(''));
+
+    d3.selectAll(".x-axis text").style('font-size', `${d3.select('#Font_Size').node().value}px`);
+    d3.selectAll(".y-axis text").style('font-size', `${d3.select('#Font_Size').node().value}px`);
 
     let titleG = targetG.append('g')
                     .attr('transform', `translate(0, ${-0.99 * margin.t})`)
@@ -435,6 +523,7 @@ function display() {
             .attr("height", 0.98 * margin.t)
         .append("xhtml:body")
             .attr('class', 'plotTitle')
+            .style('font-size', `${d3.select('#Font_Size').node().value}px`)
             .html(`<p>${title}`);
 
     
@@ -459,7 +548,7 @@ function display() {
           .attr('fill', d => color_scale(d.c))
           .attr('cx', d => x_scale(d.x))
           .attr('cy', d => y_scale(d.y))
-          .attr('r', 5)
+          .attr('r', marker_radius)
 
     updateLegend();
 }
@@ -516,16 +605,16 @@ function updateLegend_right(legend_items) {
     legendG.selectAll(".legendIcon")
         .data(legend_items)
         .join('circle')
-            .attr('cx', legend_icon_radius)
+            .attr('cx', marker_radius)
             .attr('cy', d => legend_y_scale(d))
-            .attr('r', legend_icon_radius)
+            .attr('r', marker_radius)
             .attr('fill', d => color_scale(d))
             .attr("class", 'legendIcon')
 
     legendG.selectAll(".legendIconText")
         .data(legend_items)
         .join('text')
-            .attr('x', 3*legend_icon_radius + legend_icon_padding)
+            .attr('x', 3*marker_radius + legend_icon_padding)
             .attr('y', d => legend_y_scale(d))
             .attr("class", 'legendIconText')
             .style('alignment-baseline', 'middle')
@@ -536,8 +625,8 @@ function updateLegend_bottom(legend_items) {
     legendG.selectAll('*').remove();
     legendG.attr('transform', `translate(${legend_start_x}, ${total_height-legend_height+5})`)
 
-    let legend_y_scale = d3.scaleBand().domain([...Array(n_rows).keys()]).range([legend_height,40]),
-        legend_x_scale = d3.scaleBand().domain([...Array(n_cols).keys()]).range([7, legend_width]);
+    let legend_y_scale = d3.scaleBand().domain([...Array(n_rows).keys()]).range([legend_height,35]),
+        legend_x_scale = d3.scaleBand().domain([...Array(n_cols).keys()]).range([0, legend_width]);
     
     // legendG.append('rect')
     //     .attr("x", 1)
@@ -549,8 +638,9 @@ function updateLegend_bottom(legend_items) {
     legendG.selectAll(".legendTitle")
         .data([legend_title])
         .join('text')
-            .attr('transform', () => legend_start_x==100 ? `translate(${(legend_width-100)/2}, 10)` : `translate(${legend_width/2}, 10)`)
+            .attr('transform', `translate(${legend_width/2}, 10)`)
             .attr("class", 'legendTitle')
+            .style('font-size', `${d3.select('#Font_Size').node().value}px`)
             .text(d => d)
 
     legendG.selectAll(".legendIcon")
@@ -560,17 +650,18 @@ function updateLegend_bottom(legend_items) {
                 return legend_x_scale(Math.floor(i/n_rows));
             })
             .attr('cy', (d,i) => legend_y_scale(i%n_rows))
-            .attr('r', legend_icon_radius)
+            .attr('r', marker_radius)
             .attr('fill', d => color_scale(d))
             .attr("class", 'legendIcon')
 
     legendG.selectAll(".legendIconText")
         .data(legend_items)
         .join('text')
-            .attr('x', (d,i) => legend_x_scale(Math.floor(i/n_rows))+2*legend_icon_radius)
+            .attr('x', (d,i) => legend_x_scale(Math.floor(i/n_rows))+2*marker_radius)
             .attr('y', (d,i) => legend_y_scale(i%n_rows))
             .attr("class", 'legendIconText')
             .style('alignment-baseline', 'middle')
+            .style('font-size', `${d3.select('#Font_Size').node().value}px`)
             .text(d => d)  
 }
 

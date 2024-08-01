@@ -42,7 +42,7 @@ html, body, div {
   justify-content: center;
   align-items: center;
   align-content: center;
-  height: 10%;
+  height: 12%;
   width: 99%;
   /* background-color: lightgray; */
 }
@@ -50,9 +50,9 @@ html, body, div {
 #filterControls {
   display: flex;
   flex-direction: row;
-  margin: 0.5% 0%;
-  padding: 0% 1%;
-  height: 50%;
+  margin: 0.25% 0%;
+  /* padding: 0% 1%; */
+  height: 33%;
   width: 99%;
   justify-content: space-between;
   align-items: center;
@@ -60,9 +60,10 @@ html, body, div {
 }
 
 
-#selectorControls {
+#selectorControls1, #selectorControls2 {
   display: flex;
   flex-direction: row;
+  /* margin: 0.25% 0%; */
   height: 32%;
   width: 99%;
   align-items: center;
@@ -75,7 +76,7 @@ html, body, div {
   margin-left: 100px;
   width: 99%;
   height: 84%;
-  padding-top: 20px;
+  padding-top: 10px;
 }
 
 #canvas {
@@ -92,7 +93,10 @@ html, body, div {
 
 .checkboxContainer {
   width: 100px;
-  padding-top: 10px;
+}
+
+.independentChkBx{
+  margin-top: 10px;
 }
 
 .controlItemDiv {
@@ -121,7 +125,7 @@ html, body, div {
   width: 100px;
 }
 
-#Legend_Title {
+#X_axis_Title, #Y_axis_Title, #Legend_Title {
   width: 120px;
 }
 
@@ -130,13 +134,14 @@ html, body, div {
 }
 
 #btnSubmit {
+  margin-left: 5px;
   width: 100px;
   /* height: 90%; */
 }
 
 .x-axis text, .y-axis text {
   font-family: 'Century Schoolbook', sans-serif;
-  font-size: 21px;
+  /* font-size: 21px; */
 }
 
 .axis-grid line {
@@ -144,12 +149,12 @@ html, body, div {
 }
 
 .axisText, .legendTitle {
-  font-size: 21px;
+  /* font-size: 21px; */
   font-weight: lighter;
 }
 
 .legendIconText {
-  font-size: 21px;
+  /* font-size: 21px; */
   font-weight: lighter;
 }
 
@@ -159,7 +164,7 @@ html, body, div {
 }
 
 .plotTitle p {
-  font-size: 22px;
+  /* font-size: 21px; */
   text-anchor: middle;
   text-align: center;
 }
