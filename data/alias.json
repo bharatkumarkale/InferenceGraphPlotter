@@ -23,7 +23,9 @@
     "Tensor Parallelism": "TP",
     "Pipeline Parallelism": "PP",
     "Expert Parallelism": "EP",
-    "Tensor (2) and Expert (2) Parallelism": "TP & PP"
+    "Tensor (2) and Expert (2) Parallelism": "TP & PP",
+    "Deepspeed": "DS",
+    "TensorRT-LLM": "TRT-LLM"
 }
 
 
