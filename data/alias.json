@@ -35,10 +35,6 @@
     "AMD MI250": "MI250",
     "Habana Gaudi2": "Gaudi2",
     "SambaNova SN40L": "SN40L",
-    "Weight":"W"
+    "Weight = fp16, KV Cache = fp16": "{fp16, fp16}",
+    "Weight = fp16, KV Cache = fp8": "{fp16, fp8}"
 }
-
-
-
-
-
