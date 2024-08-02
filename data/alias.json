@@ -37,5 +37,9 @@
     "SambaNova SN40L": "SN40L",
     "Weight = fp16, KV Cache = fp16": "{fp16, fp16}",
     "Weight = fp16, KV Cache = fp8": "{fp16, fp8}",
-    "Speculative Decoding": "SD"
+    "Speculative Decoding": "SD",
+    "Weight = full_prec, KV Cache = int8": "{fp16, int8}",
+    "Weight = full_prec, KV Cache = fp8": "{fp16, fp8}",
+    "Weight = int8_sq, KV Cache = int8": "{int8, int8}",
+    "Weight = int8_sq, KV Cache = fp8": "{int8, fp8}"
 }
