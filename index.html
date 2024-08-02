@@ -45,10 +45,20 @@
   <div id="visPane">
     <div id="canvas">
     </div>
-    <div id="downloadPane">
-      <button type="button" id="btnDownloadConfig" class="btn btn-primary btnDownload">Download Plot Config</button>
-      <button type="button" id="btnDownloadSVG" class="btn btn-primary btnDownload">Download as SVG</button>
+    <div id="sidePane">
+      <div id="downloadPane">
+        <button type="button" id="btnDownloadConfig" class="btn btn-primary btnDownload">Download Plot Config</button>
+        <!-- <div class="mb-3"> -->
+          <label for="configFileUpload" class="form-label">Upload Config</label>
+          <input class="form-control form-control-sm" id="configFileUpload" type="file">
+        <!-- </div> -->
+        <button type="button" id="btnDownloadSVG" class="btn btn-primary btnDownload">Download as SVG</button>
+      </div>
+      <div id="colorSelectorContainer">
+
+      </div>
     </div>
+   
   </div>
 
   <script src="./src/js/download_SVG.js"></script>

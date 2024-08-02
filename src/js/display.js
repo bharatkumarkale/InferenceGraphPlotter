@@ -83,6 +83,7 @@ let filters = [],
     filtersContainer = d3.selectAll('#filterControls'),
     selectorsContainer1 = d3.select('#selectorControls1'),
     selectorsContainer2 = d3.select('#selectorControls2'),
+    colorSelectorContainer = d3.selectAll('#colorSelectorContainer'),
     filters_values = {},
     selector_values = {},
     targetEle = d3.selectAll('#canvas'),
@@ -454,7 +455,7 @@ function display() {
     showGridLinesOnX = d3.select("#id-" + xGridLinesName.replace(/\W/g,'_')).node().checked;
     showGridLinesOnY = d3.select("#id-" + yGridLinesName.replace(/\W/g,'_')).node().checked;
     title = d3.select('#Plot_Title').node().value;
-    color_scale = d3.scaleOrdinal(d3.schemeCategory10);
+    // color_scale = d3.scaleOrdinal(d3.schemeCategory10);
     getFilters();
     let colorByAttrs = [];
     d3.select(`#dropdown-menu_c`)
@@ -500,11 +501,8 @@ function display() {
     y_scale.domain([y_min, y_max]);
     line.x((d) => x_scale(d.x))
         .y((d) => y_scale(d.y));
-    color_scale.domain(plot_data.map(d => d.c));
-    if (color_scale.domain().length>10) {
-        color_scale = d3.scaleOrdinal(d3.schemePaired);
-    }
-
+    
+    updateColorScale();
     targetG.selectAll('*').remove();
     if (showGridLinesOnX) {
         targetG.append('g')
@@ -594,7 +592,7 @@ function display() {
 }
 
 function updateLegend() {
-    legend_items = color_scale.domain().sort((a,b) => d3.ascending(+a, +b));
+    legend_items = legend_items.sort((a,b) => d3.ascending(+a, +b));
     switch (legend_position) {
         case 'Right':
             updateLegend_right(legend_items);
@@ -618,6 +616,7 @@ function updateLegend() {
             updateLegend_right(legend_items);
             break;
     }
+    updateColorSelection();
 }
 
 function updateLegend_right(legend_items) {
@@ -718,4 +717,58 @@ function updateLegend_bottomlefet(legend_items) {
 
 function updateLegend_bottomright(legend_items) {
     legendG.selectAll('*').remove();
+}
+
+function updateColorSelection() {
+    colorSelectorContainer.selectAll("*").remove();
+
+    legend_items.forEach(d => {
+        colorSelectorContainer.append('label')
+                .attr("id", `id_hexLbl_${d.replace(/\W/g,'_')}`)
+                .attr("for", `id_hexInp_${d.replace(/\W/g,'_')}`)
+                .attr('class', `hexLabel`)
+                .text(d);
+
+        let inpEle = colorSelectorContainer.append('input')
+                        .attr("name", d) 
+                        .attr("id", `id_hexInp_${d.replace(/\W/g,'_')}`)
+                        .attr('class', `form-control hexInput`);
+    
+        inpEle.node().value = color_scale(d);
+    })
+
+    colorSelectorContainer.append("button")
+        .attr('class', 'btn btn-primary')
+        .attr('type', 'button')
+        .attr('id', `btnUpdate`)
+        .text('Update')
+        .on('click', display);
+}
+
+function updateColorScale() {
+    let colorMap = {},
+        isValid = true;
+    
+    legend_items.forEach(d => {
+        let sel = d3.select(`#id_hexInp_${d.replace(/\W/g,'_')}`);
+        if (sel.node()!==null) {
+            if (sel.node().value=="") {
+                isValid = false;
+            }
+            colorMap[d] = sel.node().value;
+        } else
+            isValid = false;
+        
+    })
+    console.log(isValid)
+    if (isValid) {
+        color_scale = d3.scaleOrdinal().domain(Object.keys(colorMap)).range(Object.values(colorMap));
+    } else {
+        color_scale = d3.scaleOrdinal(d3.schemeCategory10);
+        color_scale.domain(legend_items);
+        if (color_scale.domain().length>10) {
+            color_scale = d3.scaleOrdinal(d3.schemePaired);
+        }
+    }
+    console.log(color_scale.range())
 }
