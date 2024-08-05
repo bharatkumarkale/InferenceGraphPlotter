@@ -3,6 +3,7 @@ const legend_settings = {
     'multi_select': 'no',
     'values': ['Bottom', 'Right', 'Top Left', 'Top Right', 'Bottom Left', 'Bottom Right']
 };
+const symbols = ["Circle", "Cross", "Diamond", "Square", "Star", "Triangle", "Wye"];
 const inputs1 = [
                     {
                         'name':'Legend Title',
@@ -59,8 +60,8 @@ inputs2 = [
                 'val': '700'
             },
             {
-                'name':'Point Size',
-                'val': '5'
+                'name':'Symbol Size',
+                'val': '64'
             },
             {
                 'name':'Line Size',
@@ -103,7 +104,7 @@ let filters = [],
     legend_height,
     legend_position = 'Bottom',
     legendG = targetSVG.append('g'),
-    marker_radius = 7,
+    marker_radius = 64,
     legend_icon_padding = 2,
     legend_items,
     legend_start_x = 0,
@@ -132,7 +133,7 @@ function init(plot_data) {
 
     total_width = targetEle.node().getBoundingClientRect().width;
     total_height = targetEle.node().getBoundingClientRect().height;
-    marker_radius = +d3.select('#Point_Size').node().value;
+    marker_radius = +d3.select('#Symbol_Size').node().value;
 
     if (fig_width!='') {
         total_width = +fig_width;
@@ -181,7 +182,7 @@ function init(plot_data) {
             margin = {'t':top_margin, 'l':90, 'r':25, 'b':0};
             legend_width = total_width - margin.l;
             legend_start_x = margin.l;
-            n_cols = Math.floor(legend_width/(legend_item_max_length*15+legend_icon_padding+marker_radius*2));
+            n_cols = Math.floor(legend_width/(legend_item_max_length*14+legend_icon_padding+marker_radius/8));
             if(n_cols>legend_items.length) {
                 n_cols = legend_items.length;
             }
@@ -581,15 +582,57 @@ function display() {
                 .attr('stroke-width', `${d3.select('#Line_Size').node().value}px`)
                 .attr('d', line)
       })
-    targetG.selectAll('circle')
-      .data(plot_data)
-        .join('circle')
-          .attr('fill', d => color_scale(d.c))
-          .attr('cx', d => x_scale(d.x))
-          .attr('cy', d => y_scale(d.y))
-          .attr('r', marker_radius)
+    // targetG.selectAll('circle')
+    //   .data(plot_data)
+    //     .join('circle')
+    //       .attr('fill', d => color_scale(d.c))
+    //       .attr('cx', d => x_scale(d.x))
+    //       .attr('cy', d => y_scale(d.y))
+    //       .attr('r', marker_radius)
+
+    targetG.selectAll('.symbol')
+        .data(plot_data)
+        .join('path')
+            .attr('transform', d => `translate(${x_scale(d.x)}, ${y_scale(d.y)})`)
+            .attr('fill', d => color_scale(d.c))
+            .attr('d', d => {
+                let symSel = d3.select(`#id_symbol_${d.c.replace(/\W/g,'_')}`)
+                if (symSel.node()!==null) {
+                    return getSymbol(symSel.node().value);
+                } else {
+                    return d3.symbol().type(d3.symbolCircle).size(marker_radius)();
+                }
+                
+            });
 
     updateLegend();
+}
+
+function getSymbol(name) {
+    switch (name) {
+        case "Cross":  
+            return d3.symbol().type(d3.symbolCross).size(marker_radius)();
+            break;
+        case "Diamond":    
+            return d3.symbol().type(d3.symbolDiamond).size(marker_radius)();
+            break;
+        case "Square":    
+            return d3.symbol().type(d3.symbolSquare).size(marker_radius)();
+            break;
+        case "Star":    
+            return d3.symbol().type(d3.symbolStar).size(marker_radius)();
+            break;
+        case "Triangle":    
+            return d3.symbol().type(d3.symbolTriangle).size(marker_radius)();
+            break;
+        case "Wye":    
+            return d3.symbol().type(d3.symbolWye).size(marker_radius)();
+            break;
+        case "Circle":
+        default:
+            return d3.symbol().type(d3.symbolCircle).size(marker_radius)();
+            break;
+    }
 }
 
 function updateLegend() {
@@ -617,7 +660,7 @@ function updateLegend() {
             updateLegend_right(legend_items);
             break;
     }
-    updateColorSelection();
+    updateDisplaySelection();
 }
 
 function updateLegend_right(legend_items) {
@@ -686,17 +729,30 @@ function updateLegend_bottom(legend_items) {
 
     legendG.selectAll(".legendIcon")
         .data(legend_items)
-        .join('circle')
-            .attr('cx', (d,i) => legend_x_scale(i%n_cols))
-            .attr('cy', (d,i) => legend_y_scale(Math.floor(i/n_cols)))
-            .attr('r', marker_radius)
+        .join('path')
+            .attr('transform', (d,i) => `translate(${legend_x_scale(i%n_cols)}, ${legend_y_scale(Math.floor(i/n_cols))})`)
             .attr('fill', d => color_scale(d))
             .attr("class", 'legendIcon')
+            .attr('d', d => {
+                let symSel = d3.select(`#id_symbol_${d.replace(/\W/g,'_')}`)
+                if (symSel.node()!==null) {
+                    return getSymbol(symSel.node().value);
+                } else {
+                    return d3.symbol().type(d3.symbolCircle).size(marker_radius)();
+                }
+                
+            });
+        // .join('circle')
+        //     .attr('cx', (d,i) => legend_x_scale(i%n_cols))
+        //     .attr('cy', (d,i) => legend_y_scale(Math.floor(i/n_cols)))
+        //     .attr('r', marker_radius)
+        //     .attr('fill', d => color_scale(d))
+        //     .attr("class", 'legendIcon')
 
     legendG.selectAll(".legendIconText")
         .data(legend_items)
         .join('text')
-            .attr('x', (d,i) => legend_x_scale(i%n_cols)+2*marker_radius)
+            .attr('x', (d,i) => legend_x_scale(i%n_cols)+marker_radius/8)
             .attr('y', (d,i) => legend_y_scale(Math.floor(i/n_cols)))
             .attr("class", 'legendIconText')
             .style('alignment-baseline', 'middle')
@@ -720,15 +776,15 @@ function updateLegend_bottomright(legend_items) {
     legendG.selectAll('*').remove();
 }
 
-function updateColorSelection() {
+function updateDisplaySelection() {
     colorSelectorContainer.selectAll("*").remove();
 
     legend_items.forEach(d => {
         colorSelectorContainer.append('label')
-                .attr("id", `id_hexLbl_${d.replace(/\W/g,'_')}`)
-                .attr("for", `id_hexInp_${d.replace(/\W/g,'_')}`)
-                .attr('class', `hexLabel`)
-                .text(d);
+            .attr("id", `id_hexLbl_${d.replace(/\W/g,'_')}`)
+            .attr("for", `id_hexInp_${d.replace(/\W/g,'_')}`)
+            .attr('class', `hexLabel`)
+            .text(d);
 
         let inpEle = colorSelectorContainer.append('input')
                         .attr("name", d) 
@@ -736,6 +792,18 @@ function updateColorSelection() {
                         .attr('class', `form-control configControl hexInput`);
     
         inpEle.node().value = color_scale(d);
+
+        colorSelectorContainer.append('select')
+            .attr("name", `symbol_${d.replace(/\W/g,'_')}`) 
+            .attr("id", `id_symbol_${d.replace(/\W/g,'_')}`)
+            .attr('class', `form-select selectorList`);
+        let dropdown = document.getElementById(`id_symbol_${d.replace(/\W/g,'_')}`)
+        symbols.forEach((v,i) => {
+            let option = document.createElement("option");
+                option.value = v;
+                option.text = v;
+            dropdown.appendChild(option)
+        }) 
     })
 
     colorSelectorContainer.append("button")
