@@ -32,7 +32,7 @@
     "Nvidia H100 GPU": "H100",
     "Nvidia GH200 GPU": "GH200",
     "Intel PVC GPU": "PVC",
-    "AMD MI250": "MI250",
+    "AMD MI250 GPU": "MI250",
     "Habana Gaudi2": "Gaudi2",
     "SambaNova SN40L": "SN40L",
     "Weight = fp16, KV Cache = fp16": "{fp16, fp16}",
