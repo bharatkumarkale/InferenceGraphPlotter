@@ -114,6 +114,7 @@ let filters = [],
 readFiles('Throughput')
 d3.selectAll('.configButton').on("click", configurationChanged)
 d3.select('#btnDownloadSVG').on("click", downloadSVG)
+d3.select('#btnDownloadConfig').on("click", downloadConfig)
 
 function configurationChanged() {
     let curSel = d3.select(this);
@@ -314,11 +315,11 @@ function readFiles(config) {
     })
 
     inputs1.forEach(inp => {
-        addSelector(selectorsContainer1, inp);
+        addOption(selectorsContainer1, inp);
     })
 
     inputs2.forEach(inp => {
-        addSelector(selectorsContainer2, inp);
+        addOption(selectorsContainer2, inp);
     })
 
     selectorsContainer2.append("button")
@@ -416,7 +417,7 @@ function addCheckbox(container, name, value) {
     
 }
 
-function addSelector(container, inp) {
+function addOption(container, inp) {
     let inpLbl = inp.name.replace(/\W/g,'_');
     container.append('label')
         .attr('id', `lbl_${inpLbl}`)
@@ -426,7 +427,7 @@ function addSelector(container, inp) {
     let inpEle = container.append('input')
                     .attr("name", `${inpLbl}`) 
                     .attr("id", `${inpLbl}`)
-                    .attr('class', `form-control selectorInput`);
+                    .attr('class', `form-control configControl selectorInput`);
     inpEle.node().value = inp.val;
 }
 
@@ -732,7 +733,7 @@ function updateColorSelection() {
         let inpEle = colorSelectorContainer.append('input')
                         .attr("name", d) 
                         .attr("id", `id_hexInp_${d.replace(/\W/g,'_')}`)
-                        .attr('class', `form-control hexInput`);
+                        .attr('class', `form-control configControl hexInput`);
     
         inpEle.node().value = color_scale(d);
     })
@@ -760,7 +761,7 @@ function updateColorScale() {
             isValid = false;
         
     })
-    console.log(isValid)
+    
     if (isValid) {
         color_scale = d3.scaleOrdinal().domain(Object.keys(colorMap)).range(Object.values(colorMap));
     } else {
@@ -770,5 +771,40 @@ function updateColorScale() {
             color_scale = d3.scaleOrdinal(d3.schemePaired);
         }
     }
-    console.log(color_scale.range())
+}
+
+function downloadConfig() {
+    let config = {};
+
+    // console.log(d3.selectAll('.configButton.active'));
+    config.id = d3.selectAll('.configButton.active').attr('id')
+    config.class = 'configButton';
+    
+    let inputs = [];
+    // console.log(d3.selectAll('.configControl'));
+    d3.selectAll('.configControl')
+        .each(function(d) {
+            inputs.push({'id': d3.select(this).attr(id), 'value': d3.select(this).node().value});
+        })
+    config.inputs = inputs;
+    
+    let checks = [];
+    // console.log(d3.selectAll('.form-check-input'));
+    // console.log(d3.selectAll('.checkbox'));
+    d3.selectAll('.form-check-input')
+        .each(function(d) {
+            checks.push({'id': d3.select(this).attr(id), 'value': d3.select(this).node().checked});
+        })
+    d3.selectAll('.checkbox')
+        .each(function(d) {
+            checks.push({'id': d3.select(this).attr(id), 'value': d3.select(this).node().checked});
+        })
+    config.checks = checks;
+
+    let selects = [];
+    // console.log(d3.selectAll('.form-select'));
+    d3.selectAll('.form-select')
+        .each(function(d) {
+            // checks.push({'id': d3.select(this).attr(id), 'value': d3.select(this).node().checked});
+        })
 }
