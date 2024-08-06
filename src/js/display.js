@@ -98,6 +98,7 @@ let filters = [],
     x_scale = d3.scaleLinear(),
     y_scale = d3.scaleLinear(),
     color_scale = d3.scaleOrdinal(d3.schemeCategory10),
+    symbol_map = {},
     line = d3.line(),
     legend_title = '',
     legend_width,
@@ -598,8 +599,10 @@ function display() {
             .attr('d', d => {
                 let symSel = d3.select(`#id_symbol_${d.c.replace(/\W/g,'_')}`)
                 if (symSel.node()!==null) {
+                    symbol_map[d.c]=symSel.node().value;
                     return getSymbol(symSel.node().value);
                 } else {
+                    symbol_map[d.c]='Circle';
                     return d3.symbol().type(d3.symbolCircle).size(marker_radius)();
                 }
                 
@@ -794,16 +797,19 @@ function updateDisplaySelection() {
         inpEle.node().value = color_scale(d);
 
         colorSelectorContainer.append('select')
-            .attr("name", `symbol_${d.replace(/\W/g,'_')}`) 
+            .attr("name", `${d}`) 
             .attr("id", `id_symbol_${d.replace(/\W/g,'_')}`)
-            .attr('class', `form-select selectorList`);
+            .attr('class', `form-select selectorList`)
+            .on('change', symbolSelectionChanged);
         let dropdown = document.getElementById(`id_symbol_${d.replace(/\W/g,'_')}`)
+        console.log(d, symbol_map[d]);
         symbols.forEach((v,i) => {
             let option = document.createElement("option");
                 option.value = v;
                 option.text = v;
             dropdown.appendChild(option)
         }) 
+        dropdown.value = symbol_map[d];
     })
 
     colorSelectorContainer.append("button")
@@ -812,6 +818,10 @@ function updateDisplaySelection() {
         .attr('id', `btnUpdate`)
         .text('Update')
         .on('click', display);
+}
+
+function symbolSelectionChanged() {
+    symbol_map[this.name] = this.value;
 }
 
 function updateColorScale() {
